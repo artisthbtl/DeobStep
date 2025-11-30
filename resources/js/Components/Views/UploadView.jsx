@@ -1,10 +1,11 @@
+// resources/js/Components/Views/UploadView.jsx
 import React from 'react';
 
-export default function UploadView({ file, setFile, fileName, setFileName, setJobId, setViewState }) {
+// Perhatikan props 'onStartAnalysis'
+export default function UploadView({ file, setFile, fileName, setFileName, onStartAnalysis }) {
     
     const handleFileChange = (e) => {
         const selectedFile = e.target.files[0];
-        
         if (selectedFile) {
             const name = selectedFile.name.toLowerCase();
             const isValid = name.endsWith('.ps1') || name.endsWith('.txt');
@@ -26,17 +27,11 @@ export default function UploadView({ file, setFile, fileName, setFileName, setJo
         e.preventDefault();
         if (!file) return alert("Please select a file first.");
 
-        console.log("==================================");
-        console.log("SUBMIT DETECTED");
-        console.log("File Name:", file.name);
-        console.log("File Type:", file.type);
-        console.log("File Size:", file.size);
-        console.log("==================================");
-
-        // Generate Mock Job ID and switch view
+        // Generate ID Palsu
         const mockJobId = "CASE-" + Math.floor(Math.random() * 10000);
-        setJobId(mockJobId);
-        setViewState('polling');
+        
+        // PANGGIL FUNGSI DARI HOME (Kirim ID dan Nama File)
+        onStartAnalysis(mockJobId, fileName);
     };
 
     return (

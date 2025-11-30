@@ -1,31 +1,60 @@
-import React, { useState } from 'react';
-import { Head } from '@inertiajs/react';
-
-// Import our new modular components
+import React, { useState, useEffect } from 'react';
 import Sidebar from '@/Components/Sidebar';
 import UploadView from '@/Components/Views/UploadView';
 import PollingView from '@/Components/Views/PollingView';
 import ResultView from '@/Components/Views/ResultView';
 import HistoryView from '@/Components/Views/HistoryView';
 import DocsView from '@/Components/Views/DocsView';
-
-// 1. IMPORT THE MOCK DATA
-import { MOCK_ANALYSIS_RESULT } from '../mockData';
+import { MOCK_ANALYSIS_RESULT, MOCK_HISTORY } from '@/mockData';
 
 export default function Home() {
-    // === STATE MANAGEMENT ===
     const [viewState, setViewState] = useState('upload'); 
     const [file, setFile] = useState(null);
     const [fileName, setFileName] = useState("");
     const [jobId, setJobId] = useState(null);
+    
+    // --- UPDATE 1: LOGIKA LOCAL STORAGE ---
+    // Saat aplikasi mulai, cek apakah ada data di LocalStorage?
+    // Jika ada pakai itu, jika tidak pakai MOCK_HISTORY
+    const [historyList, setHistoryList] = useState(() => {
+        const savedHistory = localStorage.getItem('deobstep_history');
+        return savedHistory ? JSON.parse(savedHistory) : MOCK_HISTORY;
+    });
+
+    // Setiap kali historyList berubah, simpan otomatis ke LocalStorage
+    useEffect(() => {
+        localStorage.setItem('deobstep_history', JSON.stringify(historyList));
+    }, [historyList]);
+    // --------------------------------------
+
+    const handleNewJob = (newId, newFileName) => {
+        const newEntry = {
+            id: newId,
+            filename: newFileName,
+            date: new Date().toISOString().split('T')[0],
+            status: 'Processing...'
+        };
+        
+        // Tambahkan ke paling atas
+        setHistoryList([newEntry, ...historyList]);
+        
+        // Simpan ID dan pindah ke loading
+        setJobId(newId);
+        setViewState('polling');
+    };
+
+    const handleSelectJobFromHistory = (selectedId) => {
+        setJobId(selectedId);
+        setViewState('result');
+    };
 
     const handleReset = () => {
         setFile(null);
         setFileName("");
+        setJobId(null);
         setViewState('upload');
     };
 
-    // === RENDER HELPER ===
     const renderContent = () => {
         switch (viewState) {
             case 'upload':
@@ -34,12 +63,13 @@ export default function Home() {
                         file={file} 
                         setFile={setFile} 
                         fileName={fileName} 
-                        setFileName={setFileName} 
-                        setJobId={setJobId} 
-                        setViewState={setViewState} 
+                        setFileName={setFileName}
+                        onStartAnalysis={handleNewJob} 
                     />
                 );
             case 'polling':
+                // --- UPDATE 2: PERBAIKAN JOB ID HILANG ---
+                // Kita harus kirim 'jobId' ke PollingView supaya muncul angkanya
                 return (
                     <PollingView 
                         jobId={jobId} 
@@ -49,40 +79,34 @@ export default function Home() {
             case 'result':
                 return (
                     <ResultView 
-                        fileName={fileName} 
+                        data={MOCK_ANALYSIS_RESULT} 
                         jobId={jobId} 
-                        handleReset={handleReset}
-                        // 2. PASS THE MOCK DATA HERE
-                        data={MOCK_ANALYSIS_RESULT}
+                        handleReset={handleReset} 
                     />
                 );
             case 'history':
-                return <HistoryView />;
+                return (
+                    <HistoryView 
+                        historyData={historyList} 
+                        onSelectJob={handleSelectJobFromHistory} 
+                    />
+                );
             case 'docs':
                 return <DocsView />;
             default:
-                return <UploadView />; // Fallback
+                return <UploadView />;
         }
     };
 
     return (
-        <>
-            <Head title="DeobStep Forensic" />
-            
-            <div className="flex h-screen bg-zinc-950 text-white font-sans selection:bg-green-500/30">
-                
-                {/* === SIDEBAR === */}
-                <Sidebar viewState={viewState} setViewState={setViewState} />
-
-                {/* === MAIN CONTENT === */}
-                <main className="flex-1 overflow-y-auto relative bg-zinc-950">
-                    <div className="absolute top-0 left-0 w-full h-96 bg-gradient-to-b from-green-900/10 to-transparent pointer-events-none"></div>
-
-                    <div className="h-full w-full p-10 md:p-14 relative z-10">
-                        {renderContent()}
-                    </div>
-                </main>
-            </div>
-        </>
+        <div className="flex h-screen bg-black text-white font-sans selection:bg-green-900 selection:text-white">
+            <Sidebar viewState={viewState} setViewState={setViewState} />
+            <main className="flex-1 overflow-hidden relative">
+                <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]"></div>
+                <div className="relative z-10 h-full p-8 overflow-y-auto custom-scrollbar">
+                    {renderContent()}
+                </div>
+            </main>
+        </div>
     );
 }

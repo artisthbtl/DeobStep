@@ -1,44 +1,55 @@
-import React, { useState } from 'react';
+// resources/js/Components/Views/HistoryView.jsx
+import React from 'react';
 
-export default function HistoryView() {
-    // Moved dummy data here since it belongs to this view
-    const [historyList] = useState([
-        { id: "CASE-8821", name: "suspicious_payroll.ps1", date: "2 hours ago", status: "Malicious" },
-        { id: "CASE-1290", name: "update_win.ps1", date: "5 hours ago", status: "Clean" },
-    ]);
-
+// Terima props data dan fungsi klik dari Home
+export default function HistoryView({ historyData, onSelectJob }) {
     return (
         <div className="max-w-5xl mx-auto animate-in fade-in duration-500">
-            <h2 className="text-2xl font-bold mb-6 text-white">Case History</h2>
-            <div className="border border-zinc-800 rounded-xl overflow-hidden bg-zinc-900/30">
-                <table className="w-full text-left">
-                    <thead className="bg-zinc-900 text-xs uppercase text-zinc-500 font-medium">
-                        <tr>
-                            <th className="px-6 py-4">Case ID</th>
-                            <th className="px-6 py-4">Filename</th>
-                            <th className="px-6 py-4">Timestamp</th>
-                            <th className="px-6 py-4 text-right">Verdict</th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-zinc-800">
-                        {historyList.map((item, index) => (
-                            <tr key={index} className="hover:bg-zinc-800/50 transition cursor-pointer group">
-                                <td className="px-6 py-4 font-mono text-zinc-400 group-hover:text-green-400 transition-colors">{item.id}</td>
-                                <td className="px-6 py-4 font-medium text-zinc-200">{item.name}</td>
-                                <td className="px-6 py-4 text-zinc-500 text-sm">{item.date}</td>
-                                <td className="px-6 py-4 text-right">
-                                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                                        item.status === 'Malicious' ? 'bg-red-500/10 text-red-400 border border-red-500/20' : 
-                                        item.status === 'Clean' ? 'bg-green-500/10 text-green-400 border border-green-500/20' : 
-                                        'bg-yellow-500/10 text-yellow-400 border border-yellow-500/20'
-                                    }`}>
-                                        {item.status}
-                                    </span>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+            <h1 className="text-3xl font-bold mb-8 flex items-center gap-3">
+                <span className="text-green-500">📜</span> Investigation History
+            </h1>
+
+            <div className="grid gap-4">
+                {/* Looping Data History */}
+                {historyData.map((job) => (
+                    <div 
+                        key={job.id}
+                        // Saat diklik, panggil onSelectJob
+                        onClick={() => onSelectJob(job.id)}
+                        className="group flex items-center justify-between p-5 bg-zinc-900/50 border border-zinc-800 rounded-xl hover:border-green-500/50 hover:bg-zinc-900 transition-all cursor-pointer"
+                    >
+                        <div className="flex items-center gap-4">
+                            <div className="p-3 rounded-lg bg-zinc-800 text-green-400 group-hover:bg-green-900/20 group-hover:text-green-300 transition-colors">
+                                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 className="font-bold text-lg text-white group-hover:text-green-400 transition-colors">
+                                    {job.id}
+                                </h3>
+                                <p className="text-sm text-zinc-400 flex items-center gap-2">
+                                    {job.filename} 
+                                    <span className="w-1 h-1 rounded-full bg-zinc-600"></span> 
+                                    {job.date}
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div className="flex items-center gap-4">
+                            <span className={`px-3 py-1 rounded-full text-xs font-mono border ${
+                                job.status === 'Dangerous' ? 'bg-red-900/20 border-red-800 text-red-400' :
+                                job.status === 'Safe' ? 'bg-green-900/20 border-green-800 text-green-400' :
+                                'bg-zinc-800 border-zinc-700 text-zinc-400'
+                            }`}>
+                                {job.status}
+                            </span>
+                            <svg className="w-5 h-5 text-zinc-600 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                            </svg>
+                        </div>
+                    </div>
+                ))}
             </div>
         </div>
     );
