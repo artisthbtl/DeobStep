@@ -2,11 +2,10 @@ import React, { useEffect } from 'react';
 
 export default function PollingView({ jobId, setViewState }) {
     
-    // Simulate polling logic
     useEffect(() => {
         const timer = setTimeout(() => {
             setViewState('result');
-        }, 3000); // Wait 3 seconds then finish
+        }, 3000);
         return () => clearTimeout(timer);
     }, [setViewState]);
 

@@ -12,19 +12,14 @@ export default function Home() {
     const [fileName, setFileName] = useState("");
     const [jobId, setJobId] = useState(null);
     
-    // --- UPDATE 1: LOGIKA LOCAL STORAGE ---
-    // Saat aplikasi mulai, cek apakah ada data di LocalStorage?
-    // Jika ada pakai itu, jika tidak pakai MOCK_HISTORY
     const [historyList, setHistoryList] = useState(() => {
         const savedHistory = localStorage.getItem('deobstep_history');
         return savedHistory ? JSON.parse(savedHistory) : MOCK_HISTORY;
     });
 
-    // Setiap kali historyList berubah, simpan otomatis ke LocalStorage
     useEffect(() => {
         localStorage.setItem('deobstep_history', JSON.stringify(historyList));
     }, [historyList]);
-    // --------------------------------------
 
     const handleNewJob = (newId, newFileName) => {
         const newEntry = {
@@ -34,10 +29,7 @@ export default function Home() {
             status: 'Processing...'
         };
         
-        // Tambahkan ke paling atas
         setHistoryList([newEntry, ...historyList]);
-        
-        // Simpan ID dan pindah ke loading
         setJobId(newId);
         setViewState('polling');
     };
@@ -67,8 +59,6 @@ export default function Home() {
                     />
                 );
             case 'polling':
-                // --- UPDATE 2: PERBAIKAN JOB ID HILANG ---
-                // Kita harus kirim 'jobId' ke PollingView supaya muncul angkanya
                 return (
                     <PollingView 
                         jobId={jobId} 

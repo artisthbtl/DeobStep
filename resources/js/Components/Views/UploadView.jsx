@@ -1,7 +1,5 @@
-// resources/js/Components/Views/UploadView.jsx
 import React from 'react';
 
-// Perhatikan props 'onStartAnalysis'
 export default function UploadView({ file, setFile, fileName, setFileName, onStartAnalysis }) {
     
     const handleFileChange = (e) => {
@@ -27,10 +25,8 @@ export default function UploadView({ file, setFile, fileName, setFileName, onSta
         e.preventDefault();
         if (!file) return alert("Please select a file first.");
 
-        // Generate ID Palsu
         const mockJobId = "CASE-" + Math.floor(Math.random() * 10000);
         
-        // PANGGIL FUNGSI DARI HOME (Kirim ID dan Nama File)
         onStartAnalysis(mockJobId, fileName);
     };
 
