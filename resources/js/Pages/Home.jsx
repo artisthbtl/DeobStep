@@ -84,13 +84,6 @@ export default function Home() {
                         handleReset={handleReset} 
                     />
                 );
-            case 'history':
-                return (
-                    <HistoryView 
-                        historyData={historyList} 
-                        onSelectJob={handleSelectJobFromHistory} 
-                    />
-                );
             case 'docs':
                 return <DocsView />;
             default:
