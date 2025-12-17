@@ -3,7 +3,6 @@ import Sidebar from '@/Components/Sidebar';
 import UploadView from '@/Components/Views/UploadView';
 import PollingView from '@/Components/Views/PollingView';
 import ResultView from '@/Components/Views/ResultView';
-import HistoryView from '@/Components/Views/HistoryView';
 import DocsView from '@/Components/Views/DocsView';
 import { MOCK_ANALYSIS_RESULT, MOCK_HISTORY } from '@/mockData';
 
